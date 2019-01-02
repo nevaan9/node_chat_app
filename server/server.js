@@ -20,19 +20,38 @@ io.on('connection', (socket) => {
     // Every time a user connects, this gets printed
     console.log('New User Connected');
 
-    socket.on('disconnect', () => {
-        console.log('User Disconnected');
+    // Emit an event to this socket
+    socket.emit('newMessage', {
+        from: 'Admin',
+        msg: 'Welcome to the chat app!'
     });
 
-    // Emit our custom event; Client is listening...
-    socket.emit('newMessage', {
-        from: 'Mr. Bean',
-        msg: 'Hey man!'
+    // Broadcast sends an event to EVERYBODY except for this socket
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        msg: 'New user joined!'
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User Disconnected');
     });
 
     // Listen to a custom event (from client)
     socket.on('createMessage', function (message) {
         console.log('received message', message);
+        // Emit our custom event; Client is listening...
+        io.emit('newMessage', {
+            from: message.from,
+            msg: message.msg,
+            createdAt: new Date().getTime()
+        });
+
+        // Broadcast sends an event to EVERYBODY except for this socket
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     msg: message.msg,
+        //     createdAt: new Date().getTime()
+        // });
     });
 });
 

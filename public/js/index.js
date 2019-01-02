@@ -6,17 +6,9 @@ socket.on('connect', function () {
     console.log('Connected to server!');
 });
 
-// Emit a custom event; Server is listening
-socket.emit('createMessage', {
-    to: 'Devin De Silva',
-    from: 'Nevaan Perera',
-    msg: 'Hello World!',
-    createdAt: 1234
-});
-
 // Listening to custom event. Server is emiting it.
 socket.on('newMessage', function (message) {
-    console.log(message);
+    console.log(`New Message from ${message.from}: ${message.msg}`);
 });
 
 socket.on('disconnect', function () {
