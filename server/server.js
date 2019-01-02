@@ -6,8 +6,11 @@ const port = process.env.PORT || 3000;
 const express = require('express');
 const socketIO = require('socket.io');
 const app = express();
-let server = http.createServer(app); // We need this as we attach this variable to the io constructor
-let io = socketIO(server);
+const server = http.createServer(app); // We need this as we attach this variable to the io constructor
+const io = socketIO(server);
+
+// Local imports
+const {genMessage} = require('./utils/message');
 
 // Configure express static middleware, to serve up the public folder
 // https://expressjs.com/en/starter/static-files.html
@@ -21,37 +24,23 @@ io.on('connection', (socket) => {
     console.log('New User Connected');
 
     // Emit an event to this socket
-    socket.emit('newMessage', {
-        from: 'Admin',
-        msg: 'Welcome to the chat app!'
-    });
+    socket.emit('newMessage', genMessage('Admin', 'Welcome to the chat app!'));
 
     // Broadcast sends an event to EVERYBODY except for this socket
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        msg: 'New user joined!'
-    });
+    socket.broadcast.emit('newMessage', genMessage('Admin', 'New User Joined!'));
 
     socket.on('disconnect', () => {
         console.log('User Disconnected');
     });
 
     // Listen to a custom event (from client)
-    socket.on('createMessage', function (message) {
+    socket.on('createMessage', function (message, callback) {
         console.log('received message', message);
         // Emit our custom event; Client is listening...
-        io.emit('newMessage', {
-            from: message.from,
-            msg: message.msg,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', genMessage(`${message.from} (${socket.id})`, message.msg));
 
-        // Broadcast sends an event to EVERYBODY except for this socket
-        // socket.broadcast.emit('newMessage', {
-        //     from: message.from,
-        //     msg: message.msg,
-        //     createdAt: new Date().getTime()
-        // });
+        // We can send databack via this callback
+        callback('This is sent from the server');
     });
 });
 
