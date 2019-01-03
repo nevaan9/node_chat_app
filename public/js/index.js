@@ -8,23 +8,24 @@ socket.on('connect', function () {
 
 // Listening to custom event. Server is emiting it.
 socket.on('newMessage', function (message) {
-    const formattedTime = moment(message.createdAt).format('h:mm a');
-    console.log(`New Message from ${message.from} ${formattedTime}: ${message.msg}`);
-    let li = jQuery('<li></li>');
-    li.text(`${message.from} ${formattedTime}: ${message.msg}`);
-    jQuery('#messages').append(li);
+    const template = jQuery('#message-template').html();
+    const html = Mustache.render(template, {
+        from: message.from,
+        msg: message.msg,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    });
+    jQuery('#messages').append(html);
 });
 
 // Append a link for location sharing
 socket.on('newLocationMessage', function (message) {
-    const formattedTime = moment(message.createdAt).format('h:mm a');
-    console.log(`New Message from ${message.from}: ${message.url}`);
-    const li = jQuery('<li></li>');
-    const a = jQuery('<a target="_blank">My current location</a>');
-    li.text(`${message.from} ${formattedTime}: `);
-    li.append(a);
-    a.attr('href', message.url);
-    jQuery('#messages').append(li);
+    const template = jQuery('#locMessage-template').html();
+    const html = Mustache.render(template, {
+        from: message.from,
+        url: message.url,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    });
+    jQuery('#messages').append(html);
 });
 
 socket.on('disconnect', function () {
