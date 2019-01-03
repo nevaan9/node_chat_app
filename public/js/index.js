@@ -8,19 +8,20 @@ socket.on('connect', function () {
 
 // Listening to custom event. Server is emiting it.
 socket.on('newMessage', function (message) {
-    console.log(`New Message from ${message.from}: ${message.msg}`);
+    const formattedTime = moment(message.createdAt).format('h:mm a');
+    console.log(`New Message from ${message.from} ${formattedTime}: ${message.msg}`);
     let li = jQuery('<li></li>');
-    li.text(`${message.from}: ${message.msg}`);
+    li.text(`${message.from} ${formattedTime}: ${message.msg}`);
     jQuery('#messages').append(li);
 });
 
 // Append a link for location sharing
 socket.on('newLocationMessage', function (message) {
-    console.log(message);
+    const formattedTime = moment(message.createdAt).format('h:mm a');
     console.log(`New Message from ${message.from}: ${message.url}`);
     const li = jQuery('<li></li>');
     const a = jQuery('<a target="_blank">My current location</a>');
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formattedTime}: `);
     li.append(a);
     a.attr('href', message.url);
     jQuery('#messages').append(li);
