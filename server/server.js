@@ -14,7 +14,7 @@ const {genMessage, genLocMessage} = require('./utils/message');
 
 // Configure express static middleware, to serve up the public folder
 // https://expressjs.com/en/starter/static-files.html
-// entry point is index.html, so it goes automatically there.
+// entry point is chat.html, so it goes automatically there.
 app.use(express.static(publicPath));
 
 // Register an event via socketIO; socket argument is the individual socket that is connected to which ever client

@@ -1,65 +1,32 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="./css/index.css">
+    <title>JOIN | CHATAPP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="./css/index.css">
 </head>
 
-<body class="chat">
-
-<div class="chat__sidebar">
-    <h3>People</h3>
-    <div id="users"></div>
-</div>
-
-<div class="chat__main">
-    <!--Render Messages Here-->
-    <ol id="messages" class="chat__messages"></ol>
-
-    <div class="chat__footer">
-        <form id="message-form">
-            <input id="message-value" name="message" placeholder="message goes here" type="text" autofocus autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <button id="send-loc">Send Location</button>
-    </div>
-</div>
-
-<!--Our Message Template-->
-<script id="message-template" type="text/template">
-<li class="message">
-    <div class="message__title">
-        <h4>{{from}}</h4>
-        <span>{{createdAt}}</span>
-    </div>
-    <div>
-        <p>{{msg}}</p>
-    </div>
-</li>
-</script>
-
-<!--Our Location Message Template-->
-<script id="locMessage-template" type="text/template">
-    <li class="message">
-        <div class="message__title">
-            <h4>{{from}}</h4>
-            <span>{{createdAt}}</span>
+<body class="centered-form">
+<div class="centered-form__form">
+    <form action="/chat.html">
+        <div class="form-field">
+            <h3>Join a Chat</h3>
         </div>
-        <div>
-            <p>
-                <a target="_blank" href="{{url}}">My Current Location</a>
-            </p>
+        <div class="form-field">
+            <label>Display Name</label>
+            <input type="text" autofocus name="name" autocomplete="off">
         </div>
-    </li>
-</script>
-
-<script src="/socket.io/socket.io.js"></script> <!--// Load in the socketIO library-->
-<script src="./js/libs/jquery-3.3.1.min.js"></script>
-<script src="./js/index.js"></script> <!--// Load in our JS-->
-<script src="./js/libs/moment.js"></script> <!--// Moment.js for time formatting -->
-<script src="./js/libs/mustache.js"></script> <!--// Mustache.js for template rendering -->
+        <div class="form-field">
+            <label>Room Name</label>
+            <input type="text" name="room" autocomplete="off">
+        </div>
+        <div class="form-field">
+            <button>Join</button>
+        </div>
+    </form>
+</div>
 </body>
 
 </html>
