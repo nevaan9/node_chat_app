@@ -10,7 +10,7 @@ const server = http.createServer(app); // We need this as we attach this variabl
 const io = socketIO(server);
 
 // Local imports
-const {genMessage} = require('./utils/message');
+const {genMessage, genLocMessage} = require('./utils/message');
 
 // Configure express static middleware, to serve up the public folder
 // https://expressjs.com/en/starter/static-files.html
@@ -41,6 +41,11 @@ io.on('connection', (socket) => {
 
         // We can send databack via this callback
         callback('This is sent from the server');
+    });
+
+    // Listen to when the share location button is created.
+    socket.on('createLocationMessage', function (message, callback) {
+        io.emit('newLocationMessage', genLocMessage(`${message.from} (${socket.id})`, message.lat, message.lng));
     });
 });
 

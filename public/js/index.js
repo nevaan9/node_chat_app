@@ -14,6 +14,18 @@ socket.on('newMessage', function (message) {
     jQuery('#messages').append(li);
 });
 
+// Append a link for location sharing
+socket.on('newLocationMessage', function (message) {
+    console.log(message);
+    console.log(`New Message from ${message.from}: ${message.url}`);
+    const li = jQuery('<li></li>');
+    const a = jQuery('<a target="_blank">My current location</a>');
+    li.text(`${message.from}: `);
+    li.append(a);
+    a.attr('href', message.url);
+    jQuery('#messages').append(li);
+});
+
 socket.on('disconnect', function () {
     console.log('Disconnected from server!');
 });
@@ -28,4 +40,23 @@ jQuery('#message-form').on('submit', function (e) {
         console.log(`This was sent from the server: ${data}`);
     });
     jQuery('#message-value').val('');
+});
+
+// Send location button
+const sendLocButton = jQuery('#send-loc');
+sendLocButton.on('click', function () {
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+        return alert('Geolocation not supported by browser.');
+    }
+
+    navigator.geolocation.getCurrentPosition(function (position) {
+        socket.emit('createLocationMessage', {
+            from: 'User',
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+        })
+    }, function () {
+        alert('Unable to share location');
+    })
 });
