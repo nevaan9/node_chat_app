@@ -1,6 +1,23 @@
 // We get this from the above script tag;
 let socket = io();
 
+// Scroll to bottom function
+scrollToBottom = function () {
+    // Selectors
+    let messages = jQuery('#messages');
+    let newMessage = messages.children('li:last-child');
+    // Heights
+    let clientHeight = messages.prop('clientHeight');
+    let scrollTop = messages.prop('scrollTop');
+    let scrollHeight = messages.prop('scrollHeight');
+    let newMessageHeight = newMessage.innerHeight();
+    let lastMessageHeight = newMessage.prev().innerHeight();
+
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    }
+};
+
 // 'connect' is a built in event
 socket.on('connect', function () {
     console.log('Connected to server!');
@@ -15,6 +32,7 @@ socket.on('newMessage', function (message) {
         createdAt: moment(message.createdAt).format('h:mm a')
     });
     jQuery('#messages').append(html);
+    scrollToBottom();
 });
 
 // Append a link for location sharing
@@ -26,6 +44,7 @@ socket.on('newLocationMessage', function (message) {
         createdAt: moment(message.createdAt).format('h:mm a')
     });
     jQuery('#messages').append(html);
+    scrollToBottom();
 });
 
 socket.on('disconnect', function () {
