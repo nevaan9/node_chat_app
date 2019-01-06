@@ -20,7 +20,15 @@ scrollToBottom = function () {
 
 // 'connect' is a built in event
 socket.on('connect', function () {
-    console.log('Connected to server!');
+    const params = jQuery.deparam(window.location.search);
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err);
+            window.location.href = '/'
+        } else {
+            console.log('No error!');
+        }
+    });
 });
 
 // Listening to custom event. Server is emiting it.
@@ -47,6 +55,16 @@ socket.on('newLocationMessage', function (message) {
     scrollToBottom();
 });
 
+// Listen to when users join a room or not
+socket.on('updateUsersList', function (userList) {
+    const ol = jQuery('<ol></ol>');
+    userList.forEach((user) => {
+        ol.append(jQuery('<li></li>').text(user));
+    });
+
+    jQuery('#users').html(ol);
+});
+
 socket.on('disconnect', function () {
     console.log('Disconnected from server!');
 });
@@ -55,7 +73,6 @@ socket.on('disconnect', function () {
 jQuery('#message-form').on('submit', function (e) {
     e.preventDefault();
     socket.emit('createMessage', {
-        from: 'User',
         msg: jQuery('[name=message]').val()
     }, function () {
         jQuery('#message-value').val('');
@@ -75,7 +92,6 @@ sendLocButton.on('click', function () {
     navigator.geolocation.getCurrentPosition(function (position) {
         sendLocButton.removeAttr('disabled').text('Send location');
         socket.emit('createLocationMessage', {
-            from: 'User',
             lat: position.coords.latitude,
             lng: position.coords.longitude,
         })
